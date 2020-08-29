@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:futtler_consume_api_example/views/album_detail.dart';
 
-import '../models/album.dart';
+import '../models/photo.dart';
 import '../services/album_service.dart';
 import '../services/api_response.dart';
 
-class AlbumsList extends StatefulWidget {
+class AlbumDetail extends StatefulWidget {
+  final int albumId;
+
+  AlbumDetail({this.albumId});
+
   @override
-  _AlbumsListState createState() => _AlbumsListState();
+  _AlbumDetailState createState() => _AlbumDetailState();
 }
 
-class _AlbumsListState extends State<AlbumsList> {
+class _AlbumDetailState extends State<AlbumDetail> {
   AlbumService _albumService;
 
-  APIResponse<List<Album>> _apiResponse;
+  APIResponse<List<Photo>> _apiResponse;
   bool _isLoading = false;
 
   @override
@@ -28,7 +31,7 @@ class _AlbumsListState extends State<AlbumsList> {
       _isLoading = true;
     });
 
-    _apiResponse = await _albumService.getAlbums(1);
+    _apiResponse = await _albumService.getPhotos(widget.albumId);
 
     setState(() {
       _isLoading = false;
@@ -38,11 +41,10 @@ class _AlbumsListState extends State<AlbumsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Albums'),
-      ),
-      body: Builder(
-        builder: (BuildContext context) {
+        appBar: AppBar(
+          title: Text('Photos'),
+        ),
+        body: Builder(builder: (BuildContext context) {
           if (_isLoading) {
             return Center(child: CircularProgressIndicator());
           }
@@ -54,19 +56,13 @@ class _AlbumsListState extends State<AlbumsList> {
           return ListView.separated(
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(_apiResponse.data[index].title),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            AlbumDetail(albumId: _apiResponse.data[index].id)));
-                  },
+                    title: Text(_apiResponse.data[index].title),
+                  leading: Image.network(_apiResponse.data[index].thumbnailUrl),
                 );
               },
               separatorBuilder: (BuildContext context, int index) =>
                   Divider(height: 1, color: Colors.grey),
               itemCount: _apiResponse.data.length);
-        },
-      ),
-    );
+        }));
   }
 }

@@ -3,9 +3,9 @@ class Photo {
   int id;
   String title;
   String url;
-  String thumbnail;
+  String thumbnailUrl;
 
-  Photo({this.albumId, this.id, this.title, this.url, this.thumbnail});
+  Photo({this.albumId, this.id, this.title, this.url, this.thumbnailUrl});
 
   factory Photo.fromJson(Map<String, dynamic> json) {
     return Photo(
@@ -13,7 +13,7 @@ class Photo {
       id: json['id'],
       title: json['title'],
       url: json['url'],
-      thumbnail: json['thumbnail'],
+      thumbnailUrl: json['thumbnailUrl'],
     );
   }
 }
